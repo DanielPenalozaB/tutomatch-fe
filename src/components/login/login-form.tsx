@@ -129,7 +129,7 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+      <div className="text-balance text-muted-foreground [&_a]:hover:text-primary text-center text-xs [&_a]:underline [&_a]:underline-offset-4">
         Al iniciar sesión aceptas nuestros <a href="#">Términos de uso</a>{" "}
         y <a href="#">Políticas de privacidad</a>.
       </div>
