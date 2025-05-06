@@ -1,4 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import { Header } from "@/components/layout/header";
+import { ProfileDropdown } from "@/components/profile-dropdown";
 import {
   SidebarInset,
   SidebarProvider
@@ -13,6 +15,11 @@ export default function ProtectedLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
+      <Header>
+        <div className='ml-auto flex items-center gap-4'>
+          <ProfileDropdown />
+        </div>
+      </Header>
         {children}
       </SidebarInset>
     </SidebarProvider>

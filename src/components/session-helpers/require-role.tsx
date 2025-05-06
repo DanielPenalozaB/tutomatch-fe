@@ -22,7 +22,7 @@ export function RequireRole({
     if (status === 'loading') return;
 
     if (!session) {
-      router.push('/login');
+      router.push('/auth/login');
       return;
     }
 

@@ -72,8 +72,8 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/login", // Custom login page path
-    signOut: "/login",
+    signIn: "/auth/login", // Custom login page path
+    signOut: "/auth/login",
     error: "/error", // Error page
   },
   session: {

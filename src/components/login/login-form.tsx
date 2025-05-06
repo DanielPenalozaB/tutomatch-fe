@@ -1,37 +1,28 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ formData, setFormData ] = useState({
+    email: '',
+    password: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: value
     }));
   };
 
@@ -40,27 +31,26 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         email: formData.email,
-        password: formData.password,
-        redirect: true,
+        password: formData.password
       });
 
       if (result?.error) {
-        toast.error("Error de autenticación", {
-          description: "Credenciales incorrectas. Intenta nuevamente.",
-        })
-      } else {
-        toast("¡Sesión iniciada!", {
-          description: "Has ingresado correctamente.",
+        toast.error('Error de autenticación', {
+          description: 'Credenciales incorrectas. Intenta nuevamente.'
         });
-        router.refresh();
+      } else {
+        toast('¡Sesión iniciada!', {
+          description: 'Has ingresado correctamente.'
+        });
+        //router.refresh();
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error('Login error:', error);
 
-      toast.error("Error", {
-        description: "Ocurrió un error al iniciar sesión.",
+      toast.error('Error', {
+        description: 'Ocurrió un error al iniciar sesión.'
       });
     } finally {
       setIsLoading(false);
@@ -68,13 +58,11 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Bienvenido a TutoMatch</CardTitle>
-          <CardDescription>
-            Ingresa tus credenciales para iniciar sesión
-          </CardDescription>
+          <CardDescription>Ingresa tus credenciales para iniciar sesión</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -82,46 +70,24 @@ export function LoginForm({
               <div className="grid gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="m@example.com"
-                    required
-                    disabled={isLoading}
-                  />
+                  <Input id="email" type="email" value={formData.email} onChange={handleChange} placeholder="m@example.com" required disabled={isLoading} />
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Contrase&ntilde;a</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
+                    <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
                       Olvidaste tu contrase&ntilde;a?
                     </a>
                   </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    disabled={isLoading}
-                  />
+                  <Input id="password" type="password" value={formData.password} onChange={handleChange} required disabled={isLoading} />
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-cyan-500 hover:bg-cyan-600"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+                <Button type="submit" className="w-full bg-cyan-500 hover:bg-cyan-600" disabled={isLoading}>
+                  {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
                 </Button>
               </div>
               <div className="text-center text-sm">
-                No tienes una cuenta?{" "}
-                <a href="/register" className="underline underline-offset-4">
+                No tienes una cuenta?{' '}
+                <a href="/auth/register" className="underline underline-offset-4">
                   Regístrate
                 </a>
               </div>
@@ -130,8 +96,7 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-balance text-muted-foreground [&_a]:hover:text-primary text-center text-xs [&_a]:underline [&_a]:underline-offset-4">
-        Al iniciar sesión aceptas nuestros <a href="#">Términos de uso</a>{" "}
-        y <a href="#">Políticas de privacidad</a>.
+        Al iniciar sesión aceptas nuestros <a href="#">Términos de uso</a> y <a href="#">Políticas de privacidad</a>.
       </div>
     </div>
   );
