@@ -1,3 +1,5 @@
+import { RequestInit } from 'next/dist/server/web/spec-extension/request';
+
 /**
  * Structured API error type
  */
@@ -37,38 +39,42 @@ export const fetchApi = async <T>(
   token?: string | null
 ): Promise<T> => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
   if (!baseUrl) {
-    throw new Error("API URL is not defined in environment variables");
+    throw new Error('API URL is not defined in environment variables');
   }
+
   const url = `${baseUrl}${endpoint}`;
 
   // Initialize headers if not provided
   const headers = new Headers(options.headers || {});
 
   // Set default Content-Type if not specified
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
   }
 
   // Add Authorization header if a token is provided
   if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+    headers.set('Authorization', `Bearer ${token}`);
   }
 
   try {
     const response = await fetch(url, {
       ...options,
-      headers,
+      headers
     });
 
     // Always attempt to parse the response as JSON
     let data;
     const contentType = response.headers.get('content-type');
+
     if (contentType && contentType.includes('application/json')) {
       data = await response.json();
     } else {
       // For non-JSON responses
       const text = await response.text();
+
       try {
         // Try to parse it anyway in case it's JSON without proper content type
         data = JSON.parse(text);

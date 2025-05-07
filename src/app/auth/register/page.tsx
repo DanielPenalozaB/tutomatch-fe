@@ -1,5 +1,5 @@
-import { RegisterForm } from '@/components/register/register-form'
-import { AcademicCapIcon } from '@heroicons/react/24/solid'
+import { RegisterForm } from '@/components/register/register-form';
+import { AcademicCapIcon } from '@heroicons/react/24/solid';
 
 export default function Register() {
   return (
@@ -14,5 +14,5 @@ export default function Register() {
         <RegisterForm />
       </div>
     </div>
-  )
+  );
 }

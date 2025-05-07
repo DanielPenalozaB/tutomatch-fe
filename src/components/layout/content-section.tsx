@@ -1,4 +1,4 @@
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '@/components/ui/separator';
 
 interface ContentSectionProps {
   title: string
@@ -9,7 +9,7 @@ interface ContentSectionProps {
 export default function ContentSection({
   title,
   desc,
-  children,
+  children
 }: ContentSectionProps) {
   return (
     <div className='flex flex-1 flex-col'>
@@ -22,5 +22,5 @@ export default function ContentSection({
         <div className='-mx-1 px-1.5 lg:max-w-xl'>{children}</div>
       </div>
     </div>
-  )
+  );
 }

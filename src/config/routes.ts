@@ -16,9 +16,9 @@ export const ROUTE_CONFIG = {
 
   // Jerarquía de roles (roles superiores heredan accesos de roles inferiores)
   ROLE_HIERARCHY: {
-    admin: ['admin', 'tutor', 'student'],
-    tutor: ['tutor', 'student'],
-    student: ['student'],
+    admin: [ 'admin', 'tutor', 'student' ],
+    tutor: [ 'tutor', 'student' ],
+    student: [ 'student' ],
     guest: [] // Usuario no autenticado
   },
 

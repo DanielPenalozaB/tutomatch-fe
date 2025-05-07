@@ -1,5 +1,5 @@
-import { fetchApi } from "../api";
-import { ProfileResponse } from "./get-profile";
+import { fetchApi } from '../api';
+import { ProfileResponse } from './get-profile';
 
 export interface UpdateProfileDto {
   name?: string;
@@ -8,7 +8,7 @@ export interface UpdateProfileDto {
   academicProgram?: string;
   semester?: number;
   profilePicture?: string;
-};
+}
 
 /**
  * Update user profile
@@ -20,11 +20,11 @@ export const updateProfile = async (
   token: string
 ): Promise<ProfileResponse> => {
   if (!token) {
-    throw new Error("Authentication token is required");
+    throw new Error('Authentication token is required');
   }
 
-  return fetchApi<ProfileResponse>("/auth/profile", {
-    method: "PATCH",
-    body: JSON.stringify(data),
+  return fetchApi<ProfileResponse>('/auth/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(data)
   }, token);
 };

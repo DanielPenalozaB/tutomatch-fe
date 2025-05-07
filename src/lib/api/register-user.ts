@@ -1,4 +1,4 @@
-import { fetchApi } from "./api";
+import { fetchApi } from './api';
 
 export interface RegisterUserDto {
   email: string;
@@ -25,9 +25,7 @@ export interface RegisterResponse {
 /**
  * Register a new user
  */
-export const registerUser = async (userData: RegisterUserDto): Promise<RegisterResponse> => {
-  return fetchApi<RegisterResponse>("/auth/register", {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
-};
+export const registerUser = async (userData: RegisterUserDto): Promise<RegisterResponse> => fetchApi<RegisterResponse>('/auth/register', {
+  method: 'POST',
+  body: JSON.stringify(userData)
+});

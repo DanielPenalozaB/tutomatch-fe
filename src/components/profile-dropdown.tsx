@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -17,10 +17,10 @@ export function ProfileDropdown() {
   const session = useSession();
 
   if (!session.data) {
-    return null
+    return null;
   }
 
-  const user = session.data?.user
+  const user = session.data?.user;
 
   return (
     <DropdownMenu modal={false}>
@@ -66,5 +66,5 @@ export function ProfileDropdown() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

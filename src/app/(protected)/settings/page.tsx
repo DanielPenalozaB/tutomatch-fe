@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import ContentSection from "@/components/layout/content-section"
-import ProfileForm from "@/features/settings/profile/profile-form"
+import ContentSection from '@/components/layout/content-section';
+import ProfileForm from '@/features/settings/profile/profile-form';
 
 export default function SettingsPage() {
   return (
@@ -11,5 +11,5 @@ export default function SettingsPage() {
     >
       <ProfileForm />
     </ContentSection>
-  )
+  );
 }

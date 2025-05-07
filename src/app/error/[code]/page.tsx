@@ -2,7 +2,7 @@ import { ROUTE_CONFIG } from '@/config/routes';
 import Link from 'next/link';
 
 export default function ErrorPage({
-  searchParams,
+  searchParams
 }: {
   searchParams: {
     code?: string;

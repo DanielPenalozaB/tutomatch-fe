@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
 
     // 2. Obtener información de autenticación
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-    const isAuthenticated = !!token;
+    const isAuthenticated = Boolean(token);
     const userRole: AppRole = (token?.role as AppRole) || 'guest';
 
     // 3. Manejar rutas públicas
@@ -38,7 +38,6 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next();
     addSecurityHeaders(response);
     return response;
-
   } catch (error) {
     // Manejo centralizado de errores
     console.error('Middleware Error:', error);
@@ -50,16 +49,16 @@ export async function middleware(request: NextRequest) {
 
 function shouldSkipMiddleware(pathname: string): boolean {
   return (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/public') ||
-    pathname.includes('.') || // Archivos estáticos
-    pathname === '/favicon.ico'
+    pathname.startsWith('/_next')
+    || pathname.startsWith('/api')
+    || pathname.startsWith('/public')
+    || pathname.includes('.') // Archivos estáticos
+    || pathname === '/favicon.ico'
   );
 }
 
 function isPublicRoute(pathname: string): boolean {
-  return ROUTE_CONFIG.PUBLIC.some(route => {
+  return ROUTE_CONFIG.PUBLIC.some((route) => {
     // Manejo especial para rutas dinámicas como reset-password/[token]
     const baseRoute = route.includes('[') ? route.split('[')[0] : route;
 
@@ -82,6 +81,7 @@ function handlePublicRoute(
     if (userRole === 'guest') {
       throw new Error('Guest role is not supported');
     }
+
     const defaultRoute = getDefaultSharedRoute(userRole);
     return NextResponse.redirect(new URL(defaultRoute, request.url));
   }
@@ -93,6 +93,7 @@ function handlePublicRoute(
 function getDefaultSharedRoute(userRole: keyof typeof ROUTE_CONFIG.ROLE_PATHS): string {
   // Primero intentamos con las rutas específicas del rol
   const roleSpecificRoutes = ROUTE_CONFIG.ROLE_PATHS[userRole] || [];
+
   if (roleSpecificRoutes.length > 0) {
     return roleSpecificRoutes[0];
   }
@@ -127,14 +128,13 @@ function redirectToError(request: NextRequest, errorCode: ErrorCode): NextRespon
 function hasRouteAccess(userRole: AppRole, pathname: string): boolean {
   // Verificar cache primero
   const cacheKey = `${userRole}:${pathname}`;
+
   if (routeCache.has(cacheKey)) {
     return routeCache.get(cacheKey)!;
   }
 
   // 1. Verificar rutas compartidas
-  const isSharedRoute = ROUTE_CONFIG.ROLE_PATHS.SHARED.some(route => 
-    matchRoute(pathname, route)
-  );
+  const isSharedRoute = ROUTE_CONFIG.ROLE_PATHS.SHARED.some((route) => matchRoute(pathname, route));
 
   if (isSharedRoute) {
     routeCache.set(cacheKey, true);
@@ -144,9 +144,9 @@ function hasRouteAccess(userRole: AppRole, pathname: string): boolean {
   // 2. Verificar rutas específicas de rol
   const accessibleRoles = ROUTE_CONFIG.ROLE_HIERARCHY[userRole] || [];
 
-  const hasAccess = accessibleRoles.some(role => {
+  const hasAccess = accessibleRoles.some((role) => {
     const roleRoutes = ROUTE_CONFIG.ROLE_PATHS[role as keyof typeof ROUTE_CONFIG.ROLE_PATHS] || [];
-    return roleRoutes.some(route => matchRoute(pathname, route));
+    return roleRoutes.some((route) => matchRoute(pathname, route));
   });
 
   routeCache.set(cacheKey, hasAccess);
@@ -180,14 +180,14 @@ function addSecurityHeaders(response: NextResponse): void {
 
   // CSP básico (ajustar según necesidades)
   const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'", // ¡Cuidado con unsafe-inline en producción!
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    "font-src 'self'",
-    `connect-src 'self' http://localhost:4000 ws://localhost:4000`,
-    "form-action 'self'",
-    "frame-ancestors 'none'"
+    'default-src \'self\'',
+    'script-src \'self\' \'unsafe-inline\'', // ¡Cuidado con unsafe-inline en producción!
+    'style-src \'self\' \'unsafe-inline\'',
+    'img-src \'self\' data:',
+    'font-src \'self\'',
+    'connect-src \'self\' http://localhost:4000 ws://localhost:4000',
+    'form-action \'self\'',
+    'frame-ancestors \'none\''
   ].join('; ');
 
   response.headers.set('Content-Security-Policy', csp);
@@ -206,6 +206,6 @@ export const config = {
      * - static assets (.*\..*)
      * - error page (para evitar bucles)
      */
-    '/((?!_next/static|_next/image|favicon.ico|api|public|error|.*\\..*).*)',
-  ],
+    '/((?!_next/static|_next/image|favicon.ico|api|public|error|.*\\..*).*)'
+  ]
 };

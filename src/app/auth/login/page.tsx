@@ -1,5 +1,5 @@
-import { LoginForm } from '@/components/login/login-form'
-import { AcademicCapIcon } from '@heroicons/react/24/solid'
+import { LoginForm } from '@/features/login/login-form';
+import { AcademicCapIcon } from '@heroicons/react/24/solid';
 
 export default function Login() {
   return (
@@ -14,5 +14,5 @@ export default function Login() {
         <LoginForm />
       </div>
     </div>
-  )
+  );
 }

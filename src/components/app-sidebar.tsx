@@ -8,50 +8,50 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { GraduationCap, Grid2X2PlusIcon } from "lucide-react"
-import { NavUser } from "./nav-user"
+  SidebarMenuItem
+} from '@/components/ui/sidebar';
+import { GraduationCap, Grid2X2PlusIcon } from 'lucide-react';
+import { NavUser } from './nav-user';
 
 // Menu items.
 const data = {
   admin: [
     {
-      title: "Inicio",
-      url: "#",
+      title: 'Inicio',
+      url: '#',
       icon: Grid2X2PlusIcon,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: 'History',
+          url: '#'
         },
         {
-          title: "Starred",
-          url: "#",
+          title: 'Starred',
+          url: '#'
         },
         {
-          title: "Settings",
-          url: "#",
-        },
-      ],
+          title: 'Settings',
+          url: '#'
+        }
+      ]
     }
   ],
   student: [
     {
-      title: "Inicio",
-      url: "/student",
+      title: 'Inicio',
+      url: '/student',
       icon: Grid2X2PlusIcon,
-      isActive: true,
+      isActive: true
     },
     {
-      title: "Sesiones",
-      url: "/sessions",
+      title: 'Sesiones',
+      url: '/sessions',
       icon: Grid2X2PlusIcon,
-      isActive: true,
-    },
+      isActive: true
+    }
   ]
-}
+};
 
 export function AppSidebar() {
   return (
@@ -97,5 +97,5 @@ export function AppSidebar() {
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

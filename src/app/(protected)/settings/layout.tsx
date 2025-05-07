@@ -4,7 +4,7 @@ import { Main } from '@/components/layout/main';
 import SidebarNav from '@/components/layout/sidebar-nav';
 
 export default function SettingsLayout({
-  children,
+  children
 }: {
   children: React.ReactNode
 }) {
@@ -28,18 +28,18 @@ export default function SettingsLayout({
         </div>
       </div>
     </Main>
-  )
+  );
 }
 
 const sidebarNavItems = [
   {
     title: 'Perfil',
     icon: <UserIcon size={18} />,
-    href: '/settings',
+    href: '/settings'
   },
   {
     title: 'Notificaciones',
     icon: <BellIcon size={18} />,
-    href: '/settings/notifications',
+    href: '/settings/notifications'
   }
-]
+];

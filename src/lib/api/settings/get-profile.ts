@@ -1,5 +1,5 @@
-import { AppRole } from "@/config/routes";
-import { fetchApi } from "../api";
+import { AppRole } from '@/config/routes';
+import { fetchApi } from '../api';
 
 export interface ProfileResponse {
   id: number;
@@ -22,14 +22,10 @@ export interface ProfileResponse {
  */
 export const getProfile = async (token?: string): Promise<ProfileResponse> => {
   if (!token) {
-    throw new Error("Authentication token is required");
+    throw new Error('Authentication token is required');
   }
 
-  try {
-    return await fetchApi<ProfileResponse>("/auth/profile", {
-      method: "GET",
-    }, token);
-  } catch (error) {
-    throw error;
-  }
+  return await fetchApi<ProfileResponse>('/auth/profile', {
+    method: 'GET'
+  }, token);
 };

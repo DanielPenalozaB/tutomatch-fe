@@ -108,7 +108,7 @@ export default function ProfileForm() {
     if (status === 'authenticated') {
       fetchUserData();
     }
-  }, [ form, session?.accessToken, status, toast ]);
+  }, [ form, session?.accessToken, status ]);
 
   const onSubmit = async (formData: ProfileFormValues) => {
     try {

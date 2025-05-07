@@ -19,7 +19,7 @@ export function RequireAuth({ children }: RequireAuthProps) {
     if (!session) {
       router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
     }
-  }, [session, status, router, pathname]);
+  }, [ session, status, router, pathname ]);
 
   if (status === 'loading') {
     return <div>Loading...</div>;

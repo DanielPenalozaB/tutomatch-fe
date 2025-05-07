@@ -27,10 +27,11 @@ export function RequireRole({
     }
 
     const hasPermission = allowedRoles.includes(session.user.role);
+
     if (!hasPermission) {
       router.push(redirectTo);
     }
-  }, [session, status, allowedRoles, redirectTo, router]);
+  }, [ session, status, allowedRoles, redirectTo, router ]);
 
   if (status === 'loading') {
     return <div>Loading...</div>;
