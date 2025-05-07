@@ -1,20 +1,10 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem
-} from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ApiResponseError } from '@/lib/api/api';
@@ -105,9 +95,7 @@ export default function ProfileForm() {
         } else {
           // Handle other errors (like network errors)
           toast.error('Error de conexión', {
-            description: error instanceof Error
-              ? error.message
-              : 'No se pudo conectar con el servidor'
+            description: error instanceof Error ? error.message : 'No se pudo conectar con el servidor'
           });
         }
 
@@ -120,7 +108,7 @@ export default function ProfileForm() {
     if (status === 'authenticated') {
       fetchUserData();
     }
-  }, [form, session?.accessToken, status, toast]);
+  }, [ form, session?.accessToken, status, toast ]);
 
   const onSubmit = async (formData: ProfileFormValues) => {
     try {
@@ -137,8 +125,8 @@ export default function ProfileForm() {
         ...(session?.user?.role === 'student' && {
           studentCode: formData.studentCode,
           academicProgram: formData.academicProgram,
-          semester: formData.semester ? parseInt(formData.semester) : undefined,
-        }),
+          semester: formData.semester ? parseInt(formData.semester) : undefined
+        })
       };
 
       // Update the profile
@@ -149,14 +137,14 @@ export default function ProfileForm() {
         ...session,
         user: {
           ...session.user,
-          name: updatedProfile.name,
+          name: updatedProfile.name
           // Add any other fields you want to update in the session
-        },
+        }
       });
 
       // Show success message
       toast.success('Éxito', {
-        description: 'Tu perfil ha sido actualizado correctamente',
+        description: 'Tu perfil ha sido actualizado correctamente'
       });
 
       // Optionally refetch the profile to ensure consistency
@@ -166,13 +154,12 @@ export default function ProfileForm() {
         bio: freshProfile.bio || '',
         studentCode: freshProfile.studentCode || '',
         academicProgram: freshProfile.academicProgram || '',
-        semester: freshProfile.semester?.toString() || '',
+        semester: freshProfile.semester?.toString() || ''
       });
-
     } catch (error) {
       console.error('Error updating profile:', error);
       toast.error('Error', {
-        description: 'No se pudo actualizar el perfil. Por favor intenta nuevamente.',
+        description: 'No se pudo actualizar el perfil. Por favor intenta nuevamente.'
       });
     } finally {
       setIsLoading(false);
@@ -214,7 +201,7 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Contrase&ntilde;a</FormLabel>
               <FormControl>
-                <Button onClick={() => push('/settings/password')} className='w-fit' disabled={isLoading}>
+                <Button type="button" onClick={() => push('/settings/password')} className="w-fit" disabled={isLoading}>
                   Cambiar contrase&ntilde;a
                 </Button>
               </FormControl>
@@ -275,45 +262,26 @@ export default function ProfileForm() {
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? Object.entries(AcademicProgram).find(
-                                ([_, value]) => value === field.value
-                              )?.[1]
-                            : "Selecciona tu programa académico"}
+                        <Button variant="outline" role="combobox" className={cn('w-full justify-between', !field.value && 'text-muted-foreground')}>
+                          {field.value ? Object.entries(AcademicProgram).find(([ , value ]) => value === field.value)?.[1] : 'Selecciona tu programa académico'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent
-                      className="w-[var(--radix-popover-trigger-width)] p-0"
-                      align="start"
-                    >
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                       <Command>
                         <CommandInput placeholder="Buscar programa..." />
                         <CommandEmpty>No se encontraron programas.</CommandEmpty>
                         <CommandGroup className="max-h-60 overflow-y-auto">
-                          {Object.entries(AcademicProgram).map(([key, value]) => (
+                          {Object.entries(AcademicProgram).map(([ key, value ]) => (
                             <CommandItem
                               value={value}
                               key={key}
                               onSelect={() => {
-                                form.setValue("academicProgram", value)
+                                form.setValue('academicProgram', value);
                               }}
                             >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  value === field.value ? "opacity-100" : "opacity-0"
-                                )}
-                              />
+                              <Check className={cn('mr-2 h-4 w-4', value === field.value ? 'opacity-100' : 'opacity-0')} />
                               {value}
                             </CommandItem>
                           ))}
@@ -321,9 +289,7 @@ export default function ProfileForm() {
                       </Command>
                     </PopoverContent>
                   </Popover>
-                  <FormDescription>
-                    El programa académico que cursas (opcional)
-                  </FormDescription>
+                  <FormDescription>El programa académico que cursas (opcional)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
