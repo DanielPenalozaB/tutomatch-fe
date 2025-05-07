@@ -1,14 +1,14 @@
 
-import CredentialsProvider from "next-auth/providers/credentials";
-import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { NextAuthOptions } from 'next-auth';
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -17,12 +17,12 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: credentials.email,
-              password: credentials.password,
-            }),
+              password: credentials.password
+            })
           });
 
           if (!response.ok) {
@@ -37,14 +37,14 @@ export const authOptions: NextAuthOptions = {
             name: data.user.name,
             image: data.user.profilePicture,
             role: data.user.role,
-            accessToken: data.accessToken,
+            accessToken: data.accessToken
           };
         } catch (error) {
-          console.error("Authentication error:", error);
+          console.error('Authentication error:', error);
           return null;
         }
-      },
-    }),
+      }
+    })
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -57,6 +57,7 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.accessToken = user.accessToken;
       }
+
       return token;
     },
     async session({ session, token }) {
@@ -68,16 +69,17 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as string;
         session.accessToken = token.accessToken as string;
       }
+
       return session;
-    },
+    }
   },
   pages: {
-    signIn: "/login", // Custom login page path
-    signOut: "/login",
-    error: "/error", // Error page
+    signIn: '/auth/login', // Custom login page path
+    signOut: '/auth/login',
+    error: '/error' // Error page
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt'
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET
 };

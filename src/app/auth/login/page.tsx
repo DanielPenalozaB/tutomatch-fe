@@ -1,7 +1,7 @@
-import { RegisterForm } from '@/components/register/register-form'
-import { AcademicCapIcon } from '@heroicons/react/24/solid'
+import { LoginForm } from '@/features/login/login-form';
+import { AcademicCapIcon } from '@heroicons/react/24/solid';
 
-export default function Register() {
+export default function Login() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -11,8 +11,8 @@ export default function Register() {
           </div>
           TutoMatch
         </a>
-        <RegisterForm />
+        <LoginForm />
       </div>
     </div>
-  )
+  );
 }

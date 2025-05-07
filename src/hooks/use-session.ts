@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useSession as useNextAuthSession } from "next-auth/react";
+import { useSession as useNextAuthSession } from 'next-auth/react';
 
 export function useSession() {
   const session = useNextAuthSession();
@@ -8,9 +8,9 @@ export function useSession() {
   return {
     ...session,
     user: session.data?.user,
-    isAdmin: session.data?.user?.role === "admin",
-    isStudent: session.data?.user?.role === "student",
-    isTeacher: session.data?.user?.role === "teacher",
-    accessToken: session.data?.accessToken,
+    isAdmin: session.data?.user?.role === 'admin',
+    isStudent: session.data?.user?.role === 'student',
+    isTeacher: session.data?.user?.role === 'teacher',
+    accessToken: session.data?.accessToken
   };
 }
