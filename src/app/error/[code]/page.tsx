@@ -1,17 +1,19 @@
 import { ROUTE_CONFIG } from '@/config/routes';
 import Link from 'next/link';
 
-export default function ErrorPage({
+export default async function ErrorPage({
   searchParams
 }: {
-  searchParams: {
+  searchParams: Promise<{
     code?: string;
     from?: string;
-  };
+  }>;
 }) {
-  const errorCode = (searchParams.code || 'not_found') as keyof typeof ROUTE_CONFIG.ERROR_CODES;
+  const awaitedSearchParams = await searchParams;
+
+  const errorCode = (awaitedSearchParams.code || 'not_found') as keyof typeof ROUTE_CONFIG.ERROR_CODES;
   const errorInfo = ROUTE_CONFIG.ERROR_CODES[errorCode] || ROUTE_CONFIG.ERROR_CODES.not_found;
-  const fromPath = searchParams.from;
+  const fromPath = awaitedSearchParams.from;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
