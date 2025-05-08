@@ -9,8 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { registerUser } from '@/lib/api/register-user';
 import { ApiResponseError } from '@/lib/api/api';
+import { registerUser } from '@/lib/api/auth/register-user';
 
 export function RegisterForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter();

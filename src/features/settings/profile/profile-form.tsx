@@ -187,7 +187,7 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Nombre completo</FormLabel>
               <FormControl>
-                <Input placeholder="Juan Daniel Peñaloza" {...field} disabled={isLoading} />
+                <Input placeholder="Tu nombre completo" {...field} disabled={isLoading} />
               </FormControl>
               <FormDescription>Ingresa tu nombre completo</FormDescription>
               <FormMessage />

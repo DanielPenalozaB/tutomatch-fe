@@ -73,7 +73,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Contrase&ntilde;a</Label>
-                    <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+                    <a href="/auth/forgot-password" className="ml-auto text-sm underline-offset-4 hover:underline">
                       Olvidaste tu contrase&ntilde;a?
                     </a>
                   </div>

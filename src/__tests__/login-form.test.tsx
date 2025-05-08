@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { LoginForm } from '@/features/login/login-form';
 import { useRouter } from 'next/navigation';
+import { LoginForm } from '@/features/auth/login/login-form';
 
 // Mock the dependencies
 jest.mock('next-auth/react', () => ({
