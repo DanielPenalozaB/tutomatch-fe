@@ -26,7 +26,6 @@ export const ROUTE_CONFIG = {
   ROLE_PATHS: {
     // Rutas compartidas (accesibles por todos los roles autenticados)
     SHARED: [
-      '/dashboard',
       '/settings',
       '/settings/notifications',
       '/settings/password',
@@ -40,6 +39,8 @@ export const ROUTE_CONFIG = {
 
     // Rutas específicas de estudiante
     student: [
+      '/student',
+      '/student/dashboard',
       '/student/find-tutors',
       '/student/find-tutors/[subjectId]',
       '/student/request-session/[tutorId]',
@@ -56,6 +57,7 @@ export const ROUTE_CONFIG = {
 
     // Rutas específicas de tutor
     tutor: [
+      '/tutor/dashboard',
       '/tutor/availability',
       '/tutor/availability/edit',
       '/tutor/availability/calendar',
@@ -77,6 +79,7 @@ export const ROUTE_CONFIG = {
 
     // Rutas específicas de administrador
     admin: [
+      '/dashboard',
       '/admin/users',
       '/admin/users/[userId]',
       '/admin/users/create',
