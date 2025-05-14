@@ -26,7 +26,7 @@ export async function middleware(request: NextRequest) {
 
     // 4. Verificar autenticación para rutas protegidas
     if (!isAuthenticated) {
-      return redirectToLogin(request, pathname);
+      return redirectToLogin(request);
     }
 
     // 5. Verificar acceso a rutas basado en roles
@@ -102,9 +102,9 @@ function getDefaultSharedRoute(userRole: keyof typeof ROUTE_CONFIG.ROLE_PATHS): 
   return ROUTE_CONFIG.ROLE_PATHS.SHARED[0] || '/dashboard';
 }
 
-function redirectToLogin(request: NextRequest, originalPath: string): NextResponse {
+function redirectToLogin(request: NextRequest): NextResponse {
   const loginUrl = new URL('/auth/login', request.url);
-  loginUrl.searchParams.set('callbackUrl', originalPath);
+  // loginUrl.searchParams.set('callbackUrl', originalPath);
   return NextResponse.redirect(loginUrl);
 }
 
