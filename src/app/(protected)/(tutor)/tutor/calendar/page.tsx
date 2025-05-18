@@ -202,25 +202,35 @@ export default function Calendar() {
         const dateString = format(day, 'yyyy-MM-dd');
         const cloneDay: Date = new Date(day.getTime());
         const isBlocked = blockedDates.includes(dateString);
-        const hasAvailability = fetchedAvailability[format(day, 'EEEE')]?.length > 0;
+        const dayName = format(day, 'EEEE');
+        const availabilities = fetchedAvailability[dayName] || [];
 
         weekDays.push(
           <div
-            className={`p-2 h-20 border text-center rounded-lg transition-all duration-150 cursor-pointer 
+            className={`p-2 h-24 border text-center rounded-lg transition-all duration-150 cursor-pointer 
             ${!isSameMonth(day, monthStart) ? 'text-gray-400' : ''} 
             ${selectedDate && isSameDay(day, selectedDate) ? 'bg-blue-500 text-white' : 'hover:bg-blue-100'} 
-            ${isBlocked ? 'bg-red-100 text-red-500 cursor-not-allowed' : ''} 
-            ${hasAvailability ? 'border-2 border-green-400' : ''}`
-            }
+            ${blockedDates.includes(dateString) ? 'bg-red-100 text-red-500 cursor-not-allowed' : ''} 
+            ${availabilities.length > 0 ? 'border-2 border-green-400' : ''}`}
             key={day.toISOString()}
             onClick={() => {
-              if (!isBlocked) {
+              if (!blockedDates.includes(dateString)) {
                 setSelectedDate(cloneDay);
                 setScheduledSession(null);
               }
             }}
           >
-            {formattedDate}
+            <div className="font-bold">{formattedDate}</div>
+            <div className="mt-1 flex flex-col items-center text-xs text-gray-700 space-y-1 overflow-y-auto max-h-12">
+              {availabilities.slice(0, 3).map((slot, index) => (
+                <span key={index} className="bg-green-200 px-1 rounded">
+                  {slot.startTime}
+                </span>
+              ))}
+              {availabilities.length > 3 && (
+                <span className="text-gray-500">+{availabilities.length - 3} más</span>
+              )}
+            </div>
           </div>
         );
         day = addDays(day, 1);
@@ -415,7 +425,7 @@ export default function Calendar() {
       {renderDays()}
       {renderCells()}
       <div className="min-h-[120px] transition-all duration-300 ease-in-out">
-      {renderFooter()}
+        {renderFooter()}
       </div>
     </motion.div>
   );
