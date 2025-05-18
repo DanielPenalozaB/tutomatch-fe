@@ -31,6 +31,8 @@ export const createAvailability = async (
     throw new Error('Authentication token is required');
   }
 
+  console.log('Data being sent to API:', data); 
+
   return fetchApi<AvailabilityResponse>('/availabilities', {
     method: 'POST',
     body: JSON.stringify(data)
