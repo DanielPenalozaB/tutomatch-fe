@@ -446,4 +446,21 @@ export default function Calendar() {
       </div>
     </motion.div>
   );
+};
+
+
+return (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="mx-auto w-full max-w-4xl rounded-2xl bg-blue-50 p-6 shadow-lg"
+  >
+    {renderHeader()}
+    {renderDays()}
+    {renderCells()}
+    <div className="min-h-[120px] transition-all duration-300 ease-in-out">
+      {renderFooter()}
+    </div>
+  </motion.div>
+);
 }
