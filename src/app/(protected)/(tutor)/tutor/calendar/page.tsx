@@ -155,10 +155,34 @@ export default function Calendar() {
     }
   };
 
+  //bloquear dias //
+
+  const handleBlockDate = () => {
+    if (!selectedDate) {
+      toast.error('Selecciona una fecha');
+      return;
+    }
+
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+    if (blockedDates.includes(dateStr)) {
+      // Desbloquear
+      setBlockedDates(blockedDates.filter(date => date !== dateStr));
+      toast.success(`Fecha desbloqueada: ${dateStr}`);
+    } else {
+      // Bloquear
+      setBlockedDates([...blockedDates, dateStr]);
+      toast.success(`Fecha bloqueada: ${dateStr}`);
+    }
+  };
+
+
+
 
 
   // Fechas bloqueadas//
-  const blockedDates = ['2025-05-11'];
+  const [blockedDates, setBlockedDates] = useState<string[]>(['2025-05-11']);
+
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -214,10 +238,8 @@ export default function Calendar() {
             ${availabilities.length > 0 ? 'border-2 border-green-400' : ''}`}
             key={day.toISOString()}
             onClick={() => {
-              if (!blockedDates.includes(dateString)) {
-                setSelectedDate(cloneDay);
-                setScheduledSession(null);
-              }
+              setSelectedDate(cloneDay);
+              setScheduledSession(null);
             }}
           >
             <div className="font-bold">{formattedDate}</div>
@@ -231,202 +253,221 @@ export default function Calendar() {
                 <span className="text-gray-500">+{availabilities.length - 3} más</span>
               )}
             </div>
-          </div>
+          </div >
         );
-        day = addDays(day, 1);
-      }
-      rows.push(
-        <div className="grid grid-cols-7 gap-1" key={day.toISOString()}>
-          {weekDays}
-        </div>
-      );
+  day = addDays(day, 1);
+}
+rows.push(
+  <div className="grid grid-cols-7 gap-1" key={day.toISOString()}>
+    {weekDays}
+  </div>
+);
     }
-    return <div>{rows}</div>;
+return <div>{rows}</div>;
   };
 
-  const renderFooter = () => {
-    const dayOfWeek = selectedDate ? format(selectedDate, 'EEEE') : '';
-    const availableHours = dayOfWeek ? availability[dayOfWeek] || [] : [];
-    const slotsForDay = fetchedAvailability[dayOfWeek] || [];
-
-    return (
-      <div className="mt-4">
-        {selectedDate && !scheduledSession && (
-          <div className="text-blue-800 font-semibold space-y-4">
-
-            <div>Fecha seleccionada: {format(selectedDate, 'dd/MM/yyyy')}</div>
-
-            {/* Formulario de creación de disponibilidad */}
-            {availableHours.length > 0 ? (
-              <div className="flex gap-2 items-center">
-                <label htmlFor="hour">Hora:</label>
-                <select
-                  id="hour"
-                  value={selectedHour}
-                  onChange={(e) => setSelectedHour(e.target.value)}
-                  className="px-2 py-1 rounded-lg border border-blue-300"
-                >
-                  {availableHours.map((hour) => (
-                    <option key={hour} value={hour.split(':')[0]}>
-                      {hour.split(':')[0]}
-                    </option>
-                  ))}
-                </select>
-                :
-                <select
-                  id="minute"
-                  value={selectedMinute}
-                  onChange={(e) => setSelectedMinute(e.target.value)}
-                  className="px-2 py-1 rounded-lg border border-blue-300"
-                >
-                  {['00', '15', '30', '45'].map((min) => (
-                    <option key={min} value={min}>{min}</option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <p className="text-red-600">No hay disponibilidad para este día.</p>
-            )}
-
-            <center>
-              <button
-                className="mt-2 bg-blue-400 text-white px-4 py-2 rounded-xl hover:bg-blue-500"
-                onClick={() => {
-                  if (selectedDate) {
-                    const h = parseInt(selectedHour, 10);
-                    const m = parseInt(selectedMinute, 10);
-                    const newDate = new Date(selectedDate);
-                    newDate.setHours(h, m, 0, 0);
-                    handleCreate(newDate);
-                  }
-                }}
-              >
-                Agendar Sesión
-              </button>
-            </center>
-
-            {/* Horarios existentes */}
-            {daySlots.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="font-semibold text-blue-800 mt-4">
-                  Horarios existentes para {dayOfWeek}
-                </h4>
-                {daySlots.map((slot) => (
-                  <div key={slot.id} className="flex items-center justify-between border p-2 rounded-lg bg-white">
-                    <span>{slot.startTime} - {slot.endTime}</span>
-                    <div className="flex gap-2">
-                      <button
-                        className="text-sm bg-yellow-300 px-2 py-1 rounded"
-                        onClick={() => {
-                          setSelectedHour(slot.startTime.split(':')[0]);
-                          setSelectedMinute(slot.startTime.split(':')[1]);
-                          toast.info('Edita el horario y presiona "Guardar cambios"');
-                        }}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="text-sm text-red-600 hover:underline"
-                        onClick={async () => {
-                          if (!user?.accessToken) {
-                            toast.error('No hay token de acceso disponible');
-                            return;
-                          }
-
-                          try {
-                            await deleteAvailability(slot.id, user.accessToken);
-                            toast.success('Disponibilidad eliminada');
-                            setDaySlots((prev) => prev.filter((s) => s.id !== slot.id));
-                          } catch (err) {
-                            toast.error('Error al eliminar la disponibilidad');
-                            console.error(err);
-                          }
-                        }}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-
-            {/* Botón para guardar edición (actualizar horario) */}
-            <center>
-              <button
-                className="mt-4 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
-                onClick={async () => {
-                  if (!user?.accessToken) {
-                    toast.error('No hay token de acceso disponible');
-                    return;
-                  }
-
-                  const allAvailabilities = await getAvailabilities(user.accessToken);
-                  const target = allAvailabilities.find(
-                    (a) =>
-                      a.day.toLowerCase() === dayOfWeek.toLowerCase() &&
-                      a.startTime === `${selectedHour}:${selectedMinute}`
-                  );
-                  if (!target) return toast.error('No se encontró disponibilidad para editar');
-
-                  const newStartTime = `${selectedHour}:${selectedMinute}`;
-                  const newEndTime = `${String(parseInt(selectedHour, 10) + 1).padStart(2, '0')}:${selectedMinute}`;
-
-                  try {
-                    await updateAvailability(target.id, {
-                      startTime: newStartTime,
-                      endTime: newEndTime,
-                    }, user.accessToken);
-
-                    toast.success('Disponibilidad actualizada');
-
-                    const updated = await getAvailabilities(user.accessToken);
-                    const grouped: Record<string, { startTime: string, endTime: string }[]> = {};
-                    updated.forEach((item) => {
-                      const day = item.day.charAt(0).toUpperCase() + item.day.slice(1);
-                      if (!grouped[day]) grouped[day] = [];
-                      grouped[day].push({ startTime: item.startTime, endTime: item.endTime });
-                    });
-                    setFetchedAvailability(grouped);
-                  } catch (err) {
-                    toast.error('Error al actualizar disponibilidad');
-                  }
-                }}
-              >
-                Guardar cambios
-              </button>
-            </center>
-
-          </div>
-        )}
-
-        {scheduledSession && (
-          <div className="text-blue-700 font-semibold text-center">
-            ✅ Sesión agendada para el {format(scheduledSession, 'dd/MM/yyyy')} a las {format(scheduledSession, 'HH:mm')}
-          </div>
-        )}
-
-        {!selectedDate && !scheduledSession && (
-          <p className="text-gray-600">Selecciona una fecha para agendar.</p>
-        )}
-      </div>
-    );
-  };
-
+const renderFooter = () => {
+  const dayOfWeek = selectedDate ? format(selectedDate, 'EEEE') : '';
+  const availableHours = dayOfWeek ? availability[dayOfWeek] || [] : [];
+  const slotsForDay = fetchedAvailability[dayOfWeek] || [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="max-w-4xl w-full mx-auto p-6 bg-blue-50 rounded-2xl shadow-lg"
-    >
-      {renderHeader()}
-      {renderDays()}
-      {renderCells()}
-      <div className="min-h-[120px] transition-all duration-300 ease-in-out">
-        {renderFooter()}
-      </div>
-    </motion.div>
+    <div className="mt-4">
+      {selectedDate && !scheduledSession && (
+        <div className="text-blue-800 font-semibold space-y-4">
+
+          <div>Fecha seleccionada: {format(selectedDate, 'dd/MM/yyyy')}</div>
+
+          {/* Formulario de creación de disponibilidad */}
+          {availableHours.length > 0 ? (
+            <div className="flex gap-2 items-center">
+              <label htmlFor="hour">Hora:</label>
+              <select
+                id="hour"
+                value={selectedHour}
+                onChange={(e) => setSelectedHour(e.target.value)}
+                className="px-2 py-1 rounded-lg border border-blue-300"
+              >
+                {availableHours.map((hour) => (
+                  <option key={hour} value={hour.split(':')[0]}>
+                    {hour.split(':')[0]}
+                  </option>
+                ))}
+              </select>
+              :
+              <select
+                id="minute"
+                value={selectedMinute}
+                onChange={(e) => setSelectedMinute(e.target.value)}
+                className="px-2 py-1 rounded-lg border border-blue-300"
+              >
+                {['00', '30'].map((min) => (
+                  <option key={min} value={min}>{min}</option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <p className="text-red-600">No hay disponibilidad para este día.</p>
+          )}
+
+          <center>
+            <button
+              className="mt-2 bg-blue-400 text-white px-4 py-2 rounded-xl hover:bg-blue-500"
+              onClick={() => {
+                if (selectedDate) {
+                  const h = parseInt(selectedHour, 10);
+                  const m = parseInt(selectedMinute, 10);
+                  const newDate = new Date(selectedDate);
+                  newDate.setHours(h, m, 0, 0);
+                  handleCreate(newDate);
+                }
+              }}
+            >
+              Agendar Sesión
+            </button>
+          </center>
+
+          <center>
+            <button
+              className="mt-2 bg-red-400 text-white px-4 py-2 rounded-xl hover:bg-red-500"
+              onClick={handleBlockDate}
+            >
+              {blockedDates.includes(format(selectedDate, 'yyyy-MM-dd'))
+                ? 'Desbloquear Fecha'
+                : 'Bloquear Fecha'}
+            </button>
+          </center>
+
+
+          {/* Horarios existentes */}
+          {daySlots.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="font-semibold text-blue-800 mt-4">
+                Horarios existentes para {dayOfWeek}
+              </h4>
+              {daySlots.map((slot) => (
+                <div key={slot.id} className="flex items-center justify-between border p-2 rounded-lg bg-white">
+                  <span>{slot.startTime} - {slot.endTime}</span>
+                  <div className="flex gap-2">
+                    <button
+                      className="text-sm bg-yellow-300 px-2 py-1 rounded"
+                      onClick={() => {
+                        setSelectedHour(slot.startTime.split(':')[0]);
+                        setSelectedMinute(slot.startTime.split(':')[1]);
+                        toast.info('Edita el horario y presiona "Guardar cambios"');
+                      }}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="text-sm text-red-600 hover:underline"
+                      onClick={async () => {
+                        if (!user?.accessToken) {
+                          toast.error('No hay token de acceso disponible');
+                          return;
+                        }
+
+                        try {
+                          await deleteAvailability(slot.id, user.accessToken);
+                          toast.success('Disponibilidad eliminada');
+                          setDaySlots((prev) => prev.filter((s) => s.id !== slot.id));
+                        } catch (err) {
+                          toast.error('Error al eliminar la disponibilidad');
+                          console.error(err);
+                        }
+                      }}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+
+          {/* Botón para guardar edición (actualizar horario) */}
+          <center>
+            <button
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
+              onClick={async () => {
+                if (!user?.accessToken) {
+                  toast.error('No hay token de acceso disponible');
+                  return;
+                }
+
+                const allAvailabilities = await getAvailabilities(user.accessToken);
+                const target = allAvailabilities.find(
+                  (a) =>
+                    a.day.toLowerCase() === dayOfWeek.toLowerCase() &&
+                    a.startTime === `${selectedHour}:${selectedMinute}`
+                );
+                if (!target) return toast.error('No se encontró disponibilidad para editar');
+
+                const newStartTime = `${selectedHour}:${selectedMinute}`;
+                const newEndTime = `${String(parseInt(selectedHour, 10) + 1).padStart(2, '0')}:${selectedMinute}`;
+
+                try {
+                  await updateAvailability(target.id, {
+                    startTime: newStartTime,
+                    endTime: newEndTime,
+                  }, user.accessToken);
+
+                  toast.success('Disponibilidad actualizada');
+
+                  // Refrescar los datos locales para reflejar los cambios
+                  const updatedAvailabilities = await getAvailabilities(user.accessToken);
+                  const filtered = updatedAvailabilities.filter(
+                    (av) => av.day.toLowerCase() === dayOfWeek.toLowerCase()
+                  );
+                  setDaySlots(filtered);
+
+                  const grouped: Record<string, { startTime: string, endTime: string }[]> = {};
+                  updatedAvailabilities.forEach((item) => {
+                    const day = item.day.charAt(0).toUpperCase() + item.day.slice(1);
+                    if (!grouped[day]) grouped[day] = [];
+                    grouped[day].push({ startTime: item.startTime, endTime: item.endTime });
+                  });
+                  setFetchedAvailability(grouped);
+                } catch (err) {
+                  toast.error('Error al actualizar disponibilidad');
+                  console.error(err);
+                }
+              }}
+            >
+              Guardar cambios
+            </button>
+          </center>
+
+        </div>
+      )}
+
+      {scheduledSession && (
+        <div className="text-blue-700 font-semibold text-center">
+          ✅ Sesión agendada para el {format(scheduledSession, 'dd/MM/yyyy')} a las {format(scheduledSession, 'HH:mm')}
+        </div>
+      )}
+
+      {!selectedDate && !scheduledSession && (
+        <p className="text-gray-600">Selecciona una fecha para agendar.</p>
+      )}
+    </div>
   );
+};
+
+
+return (
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="max-w-4xl w-full mx-auto p-6 bg-blue-50 rounded-2xl shadow-lg"
+  >
+    {renderHeader()}
+    {renderDays()}
+    {renderCells()}
+    <div className="min-h-[120px] transition-all duration-300 ease-in-out">
+      {renderFooter()}
+    </div>
+  </motion.div>
+);
 }
