@@ -1,10 +1,11 @@
+//18/05/2025
 
 import { fetchApi } from '../../api';
 
 export interface Availability {
   id: number;
-  day: string; // 'monday', 'tuesday', etc.
-  startTime: string; // '09:00'
+  day: string;
+  startTime: string;
   endTime: string;
 }
 
@@ -13,3 +14,6 @@ export const getAvailabilities = async (token: string): Promise<Availability[]> 
     method: 'GET',
   }, token);
 };
+
+
+
