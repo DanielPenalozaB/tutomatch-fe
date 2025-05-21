@@ -4,19 +4,19 @@ import { Row } from '@tanstack/react-table';
 import { Ellipsis, Trash } from 'lucide-react';
 import { useTutoringOffers } from '../context/tutoring-offers-context';
 import { useRouter } from 'next/navigation';
-import { TutoringOfferResponse } from '@/lib/api/tutor/tutoring-offers/get-tutoring-offers';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { deleteTutoringOffer } from '@/lib/api/tutor/tutoring-offers/delete-tutoring-offer';
 import { useSession } from 'next-auth/react';
 import { toggleTutoringOfferStatus } from '@/lib/api/tutor/tutoring-offers/toggle-status-tutoring-offer';
 import { toast } from 'sonner';
+import { DataTableRow } from '@/app/(protected)/tutor/tutoring-offers/page';
 
-interface DataTableRowActionsProps<TData> {
-  row: Row<TData>;
+interface DataTableRowActionsProps {
+  row: Row<DataTableRow>;
 }
 
-export function DataTableRowActions<TData extends TutoringOfferResponse>({ row }: DataTableRowActionsProps<TData>) {
+export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const tutoringOffer = row.original;
   const [ dialogOpen, setDialogOpen ] = useState(false);
   const { setCurrentRow } = useTutoringOffers();
@@ -77,7 +77,6 @@ export function DataTableRowActions<TData extends TutoringOfferResponse>({ row }
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {
-              setCurrentRow(tutoringOffer);
               setDialogOpen(true);
             }}
             className='hover:bg-red-100! hover:text-red-500! bg-red-50 text-red-500'

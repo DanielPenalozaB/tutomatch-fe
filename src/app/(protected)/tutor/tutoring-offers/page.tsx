@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import TutoringOffersProvider from '@/features/tutor/tutoring-offers/context/tutoring-offers-context';
 
-type DataTableRow = {
+export type DataTableRow = {
   id: number;
   subjectId: number;
   subjectName: string;

@@ -2,9 +2,9 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTableRowActions } from './data-table-row-actions';
-import { TutoringOffer } from '../data/schema';
+import { DataTableRow } from '@/app/(protected)/tutor/tutoring-offers/page';
 
-export const columns: ColumnDef<TutoringOffer>[] = [
+export const columns: ColumnDef<DataTableRow>[] = [
   {
     accessorKey: 'subjectName',
     header: 'Asignatura'
