@@ -42,6 +42,7 @@ export const ROUTE_CONFIG = {
       '/student',
       '/student/dashboard',
       '/student/find-tutors',
+      '/student/request-session',
       '/student/find-tutors/[subjectId]',
       '/student/request-session/[tutorId]',
       '/student/my-sessions',
