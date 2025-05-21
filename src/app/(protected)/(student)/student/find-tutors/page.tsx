@@ -6,17 +6,56 @@ import DaySelector from '@/components/layout/DaySelector';
 import RatingFilter from '@/components/layout/RatingFilter';
 import { useDebouncedValue } from '@/components/layout/useDebouncedValue';
 
-// Tipos para los filtros y tutores
-type Filters = {
-  subject: string;
-  modality: string;
-  name: string;
-  days: string[];
-  hourStart: string;
-  hourEnd: string;
-  minRating: number;
-};
+// ------------- Componentes auxiliares -----------------
 
+// Paginador
+type PaginatorProps = {
+  page: number;
+  totalPages: number;
+  onChange: (page: number) => void;
+};
+function Paginator({ page, totalPages, onChange }: PaginatorProps) {
+  return (
+    <div className="flex gap-2 my-4 items-center">
+      <button
+        className="px-3 py-1 rounded border disabled:opacity-50"
+        disabled={page === 1}
+        onClick={() => onChange(page - 1)}
+      >
+        Anterior
+      </button>
+      <span className="mx-2">Página {page} de {totalPages}</span>
+      <button
+        className="px-3 py-1 rounded border disabled:opacity-50"
+        disabled={page === totalPages}
+        onClick={() => onChange(page + 1)}
+      >
+        Siguiente
+      </button>
+    </div>
+  );
+}
+
+// Selector de orden
+type SortType = 'relevance' | 'hour' | 'rating';
+function SortSelector({ value, onChange }: { value: SortType; onChange: (v: SortType) => void }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium">Ordenar por</label>
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value as SortType)}
+        className="block w-full border rounded"
+      >
+        <option value="relevance">Relevancia</option>
+        <option value="hour">Horario</option>
+        <option value="rating">Calificación</option>
+      </select>
+    </div>
+  );
+}
+
+// Modal de detalles del tutor
 type Tutor = {
   id: number;
   name: string;
@@ -27,6 +66,42 @@ type Tutor = {
   hourStart: number;
   hourEnd: number;
   rating: number;
+};
+function TutorDetailModal({ tutor, onClose }: { tutor: Tutor | null; onClose: () => void }) {
+  if (!tutor) return null;
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-xl font-bold text-gray-500 hover:text-gray-700"
+        >
+          ×
+        </button>
+        <h2 className="text-xl font-bold mb-2">{tutor.name}</h2>
+        <p><b>Materia:</b> {tutor.subject}</p>
+        <p><b>Modalidad:</b> {tutor.modality}</p>
+        <p><b>Horario:</b> {tutor.schedule}</p>
+        <p><b>Días:</b> {tutor.days.join(', ')}</p>
+        <p><b>Calificación:</b> {tutor.rating}</p>
+        <p><b>Hora inicio:</b> {tutor.hourStart}:00</p>
+        <p><b>Hora fin:</b> {tutor.hourEnd}:00</p>
+      </div>
+    </div>
+  );
+}
+
+// ------------------------------------------------------
+
+// Tipos para los filtros
+type Filters = {
+  subject: string;
+  modality: string;
+  name: string;
+  days: string[];
+  hourStart: string;
+  hourEnd: string;
+  minRating: number;
 };
 
 // Simulación de datos...
@@ -42,7 +117,18 @@ const tutors: Tutor[] = [
     hourEnd: 10,
     rating: 4.7,
   },
-  // Más tutores...
+  {
+    id: 2,
+    name: 'Juan López',
+    subject: 'Física',
+    modality: 'presencial',
+    schedule: 'Martes 2-4pm',
+    days: ['Martes'],
+    hourStart: 14,
+    hourEnd: 16,
+    rating: 4.2,
+  },
+  // Puedes agregar más tutores aquí...
 ];
 
 const subjects = ['Matemáticas', 'Física', 'Química'];
@@ -58,8 +144,17 @@ export default function FindTutorsPage() {
     hourEnd: '',
     minRating: 0,
   });
+  const [sort, setSort] = useState<SortType>('relevance');
   const debouncedFilters = useDebouncedValue(filters, 300);
 
+  // Paginación
+  const [page, setPage] = useState(1);
+  const tutorsPerPage = 5;
+
+  // Detalle de tutor
+  const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
+
+  // Filtros y orden
   const [filteredTutors, setFilteredTutors] = useState<Tutor[]>(tutors);
 
   useEffect(() => {
@@ -87,8 +182,28 @@ export default function FindTutorsPage() {
       result = result.filter(t => t.rating >= debouncedFilters.minRating);
     }
 
+    // Ordenar resultados
+    if (sort === 'rating') {
+      result = [...result].sort((a, b) => b.rating - a.rating);
+    } else if (sort === 'hour') {
+      result = [...result].sort((a, b) => a.hourStart - b.hourStart);
+    } // 'relevance' mantiene el orden original
+
     setFilteredTutors(result);
-  }, [debouncedFilters]);
+    setPage(1); // Resetear a la primera página cada vez que cambian los filtros/orden
+  }, [debouncedFilters, sort]);
+
+  // Paginación
+  const totalPages = Math.max(1, Math.ceil(filteredTutors.length / tutorsPerPage));
+  const paginatedTutors = filteredTutors.slice(
+    (page - 1) * tutorsPerPage,
+    page * tutorsPerPage
+  );
+
+  // Asegúrate de que la página sea válida si cambian los resultados
+  useEffect(() => {
+    if (page > totalPages) setPage(1);
+  }, [totalPages, page]);
 
   return (
     <ContentSection title="Buscar tutorías" desc="Utiliza los filtros para encontrar el tutor ideal.">
@@ -167,17 +282,25 @@ export default function FindTutorsPage() {
               minRating={filters.minRating}
               onChange={(minRating: number) => setFilters(f => ({ ...f, minRating }))}
             />
+            {/* Selector de orden */}
+            <SortSelector value={sort} onChange={setSort} />
           </form>
         </div>
-        {/* Resultados */}
+        {/* Resultados paginados */}
         <div>
           <h3 className="mb-2 font-semibold">Resultados:</h3>
+          <Paginator page={page} totalPages={totalPages} onChange={setPage} />
           <ul className="space-y-2">
-            {filteredTutors.length === 0 && (
+            {paginatedTutors.length === 0 && (
               <li className="text-gray-500">No hay tutores que coincidan con los filtros.</li>
             )}
-            {filteredTutors.map(tutor => (
-              <li key={tutor.id} className="p-3 border rounded flex flex-col md:flex-row md:justify-between">
+            {paginatedTutors.map(tutor => (
+              <li
+                key={tutor.id}
+                className="p-3 border rounded flex flex-col md:flex-row md:justify-between cursor-pointer hover:bg-gray-50"
+                onClick={() => setSelectedTutor(tutor)}
+                title="Ver detalles del tutor"
+              >
                 <div>
                   <span className="font-bold">{tutor.name}</span> — {tutor.subject}
                   <div className="text-sm text-gray-600">{tutor.schedule}</div>
@@ -189,7 +312,10 @@ export default function FindTutorsPage() {
               </li>
             ))}
           </ul>
+          <Paginator page={page} totalPages={totalPages} onChange={setPage} />
         </div>
+        {/* Modal detalle tutor */}
+        <TutorDetailModal tutor={selectedTutor} onClose={() => setSelectedTutor(null)} />
       </div>
     </ContentSection>
   );
