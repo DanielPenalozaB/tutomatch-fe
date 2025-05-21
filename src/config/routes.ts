@@ -58,6 +58,13 @@ export const ROUTE_CONFIG = {
     // Rutas específicas de tutor
     tutor: [
       '/tutor/dashboard',
+      '/tutor/tutoring-offers',
+      '/tutor/tutoring-offers/[offerId]',
+      '/tutor/tutoring-offers/create',
+      '/tutor/tutoring-offers/edit/[offerId]',
+      '/tutor/tutoring-sessions/create',
+      '/tutor/tutoring-sessions/edit/[offerId]',
+      '/tutor/tutoring-sessions/[offerId]',
       '/tutor/availability',
       '/tutor/availability/edit',
       '/tutor/availability/calendar',

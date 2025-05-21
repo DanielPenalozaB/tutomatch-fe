@@ -55,6 +55,11 @@ const data = {
       icon: CalendarCheck
     },
     {
+      title: 'Ofertas de tutoría',
+      url: '/tutor/tutoring-offers',
+      icon: Inbox
+    },
+    {
       title: 'Peticiones de sesiones',
       url: '/tutor/session-requests',
       icon: Inbox
