@@ -8,8 +8,6 @@ export interface Availability {
   endTime: string;
 }
 
-export const getAvailabilities = async (token: string): Promise<Availability[]> => {
-  return await fetchApi<Availability[]>('/availabilities', {
-    method: 'GET',
-  }, token);
-};
+export const getAvailabilities = async (token: string): Promise<Availability[]> => await fetchApi<Availability[]>('/availabilities', {
+  method: 'GET'
+}, token);

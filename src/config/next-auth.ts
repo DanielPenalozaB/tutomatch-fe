@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           const data = await response.json();
 
           return {
-            id: String(data.user.id),
+            id: data.user.id,
             email: data.user.email,
             name: data.user.name,
             image: data.user.profilePicture,
@@ -50,7 +50,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       // Initial sign in
       if (user) {
-        token.id = user.id;
+        token.id = user.id as number;
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image;
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
+        session.user.id = token.id as number;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.user.image = token.picture as string;

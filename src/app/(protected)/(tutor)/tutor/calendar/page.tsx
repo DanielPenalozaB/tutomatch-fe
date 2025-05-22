@@ -22,22 +22,16 @@ import { Availability, getAvailabilities } from '@/lib/api/tutor/availability/ge
 import { updateAvailability } from '@/lib/api/tutor/availability/update-availability';
 import { deleteAvailability } from '@/lib/api/tutor/availability/delete-availability';
 
-
-
 export default function Calendar() {
   const user = useSession();
 
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedHour, setSelectedHour] = useState<string>('10');
-  const [selectedMinute, setSelectedMinute] = useState<string>('00');
-  const [scheduledSession, setScheduledSession] = useState<Date | null>(null);
-  const [fetchedAvailability, setFetchedAvailability] = useState<Record<string, { startTime: string, endTime: string }[]>>({});
-  const [daySlots, setDaySlots] = useState<Availability[]>([]);
-
-
-
-
+  const [ currentMonth, setCurrentMonth ] = useState<Date>(new Date());
+  const [ selectedDate, setSelectedDate ] = useState<Date | null>(null);
+  const [ selectedHour, setSelectedHour ] = useState<string>('10');
+  const [ selectedMinute, setSelectedMinute ] = useState<string>('00');
+  const [ scheduledSession, setScheduledSession ] = useState<Date | null>(null);
+  const [ fetchedAvailability, setFetchedAvailability ] = useState<Record<string, { startTime: string, endTime: string }[]>>({});
+  const [ daySlots, setDaySlots ] = useState<Availability[]>([]);
 
   // Actualización 14/05/2025
 
@@ -48,15 +42,13 @@ export default function Calendar() {
       const allAvailabilities = await getAvailabilities(user.accessToken);
       const dayOfWeek = format(selectedDate, 'EEEE').toLowerCase();
 
-      const filtered = allAvailabilities.filter(
-        (av) => av.day.toLowerCase() === dayOfWeek
-      );
+      const filtered = allAvailabilities.filter((av) => av.day.toLowerCase() === dayOfWeek);
 
       setDaySlots(filtered); // Guarda slots con id, startTime, endTime, etc.
     };
 
     loadAvailabilities();
-  }, [user, selectedDate]); useEffect(() => {
+  }, [ user, selectedDate ]); useEffect(() => {
     const loadAvailability = async () => {
       if (!user.user?.id || !user.accessToken) return;
 
@@ -76,19 +68,18 @@ export default function Calendar() {
       }
     };
 
-
     loadAvailability();
-  }, [user]);
+  }, [ user ]);
 
   // Disponibilidad por día de la semana
   const availability: Record<string, string[]> = {
-    Monday: ['08:00', '09:00', '10:00', '11:00'],
-    Tuesday: ['14:00', '15:00'],
-    Wednesday: ['08:00', '09:00'],
+    Monday: [ '08:00', '09:00', '10:00', '11:00' ],
+    Tuesday: [ '14:00', '15:00' ],
+    Wednesday: [ '08:00', '09:00' ],
     Thursday: [],
-    Friday: ['10:00', '11:00', '12:00'],
-    Saturday: ['09:00', '10:00'],
-    Sunday: [],
+    Friday: [ '10:00', '11:00', '12:00' ],
+    Saturday: [ '09:00', '10:00' ],
+    Sunday: []
   };
 
   const handleCreate = async (date: Date) => {
@@ -122,8 +113,8 @@ export default function Calendar() {
     const newEnd = (h + 1) * 60 + m;
 
     const hasConflict = dayAvailabilities.some((av) => {
-      const [startH, startM] = av.startTime.split(':').map(Number);
-      const [endH, endM] = av.endTime.split(':').map(Number);
+      const [ startH, startM ] = av.startTime.split(':').map(Number);
+      const [ endH, endM ] = av.endTime.split(':').map(Number);
 
       const existingStart = startH * 60 + startM;
       const existingEnd = endH * 60 + endM;
@@ -136,13 +127,12 @@ export default function Calendar() {
       return;
     }
 
-
     try {
-      const response = await createAvailability({
+      await createAvailability({
         tutorId: user.user.id,
         day: dayOfWeek.toLowerCase() as CreateAvailabilityDto['day'],
         startTime,
-        endTime,
+        endTime
       }, user.accessToken);
 
       setScheduledSession(newDate);
@@ -167,45 +157,40 @@ export default function Calendar() {
 
     if (blockedDates.includes(dateStr)) {
       // Desbloquear
-      setBlockedDates(blockedDates.filter(date => date !== dateStr));
+      setBlockedDates(blockedDates.filter((date) => date !== dateStr));
       toast.success(`Fecha desbloqueada: ${dateStr}`);
     } else {
       // Bloquear
-      setBlockedDates([...blockedDates, dateStr]);
+      setBlockedDates([ ...blockedDates, dateStr ]);
       toast.success(`Fecha bloqueada: ${dateStr}`);
     }
   };
 
-
-
-
-
   // Fechas bloqueadas//
-  const [blockedDates, setBlockedDates] = useState<string[]>(['2025-05-11']);
-
+  const [ blockedDates, setBlockedDates ] = useState<string[]>([ '2025-05-11' ]);
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
   const renderHeader = () => (
-    <div className="flex justify-between items-center py-4">
-      <button onClick={prevMonth} className="bg-blue-200 px-4 py-2 rounded-xl">&#60;</button>
+    <div className="flex items-center justify-between py-4">
+      <button onClick={prevMonth} className="rounded-xl bg-blue-200 px-4 py-2">&#60;</button>
       <h2 className="text-xl font-bold text-blue-700">{format(currentMonth, 'MMMM yyyy')}</h2>
-      <button onClick={nextMonth} className="bg-blue-200 px-4 py-2 rounded-xl">&#62;</button>
+      <button onClick={nextMonth} className="rounded-xl bg-blue-200 px-4 py-2">&#62;</button>
     </div>
   );
 
   const renderDays = () => {
     const days = [];
     const date = new Date();
+
     for (let i = 0; i < 7; i++) {
-      days.push(
-        <div key={i} className="text-center text-blue-600 font-semibold">
-          {format(addDays(startOfWeek(date), i), 'EEE')}
-        </div>
-      );
+      days.push(<div key={i} className="text-center font-semibold text-blue-600">
+        {format(addDays(startOfWeek(date), i), 'EEE')}
+      </div>);
     }
-    return <div className="grid grid-cols-7 mb-2">{days}</div>;
+
+    return <div className="mb-2 grid grid-cols-7">{days}</div>;
   };
 
   const renderCells = () => {
@@ -214,260 +199,251 @@ export default function Calendar() {
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
 
-
-
     const rows = [];
     let day = new Date(startDate);
 
     while (day <= endDate) {
       const weekDays = [];
+
       for (let i = 0; i < 7; i++) {
         const formattedDate = format(day, 'd');
         const dateString = format(day, 'yyyy-MM-dd');
         const cloneDay: Date = new Date(day.getTime());
-        const isBlocked = blockedDates.includes(dateString);
         const dayName = format(day, 'EEEE');
         const availabilities = fetchedAvailability[dayName] || [];
 
-        weekDays.push(
-          <div
-            className={`p-2 h-24 border text-center rounded-lg transition-all duration-150 cursor-pointer 
+        weekDays.push(<div
+          className={`p-2 h-24 border text-center rounded-lg transition-all duration-150 cursor-pointer 
             ${!isSameMonth(day, monthStart) ? 'text-gray-400' : ''} 
             ${selectedDate && isSameDay(day, selectedDate) ? 'bg-blue-500 text-white' : 'hover:bg-blue-100'} 
             ${blockedDates.includes(dateString) ? 'bg-red-100 text-red-500 cursor-not-allowed' : ''} 
             ${availabilities.length > 0 ? 'border-2 border-green-400' : ''}`}
-            key={day.toISOString()}
-            onClick={() => {
-              setSelectedDate(cloneDay);
-              setScheduledSession(null);
-            }}
-          >
-            <div className="font-bold">{formattedDate}</div>
-            <div className="mt-1 flex flex-col items-center text-xs text-gray-700 space-y-1 overflow-y-auto max-h-12">
-              {availabilities.slice(0, 3).map((slot, index) => (
-                <span key={index} className="bg-green-200 px-1 rounded">
-                  {slot.startTime}
-                </span>
-              ))}
-              {availabilities.length > 3 && (
-                <span className="text-gray-500">+{availabilities.length - 3} más</span>
-              )}
-            </div>
-          </div >
-        );
-  day = addDays(day, 1);
-}
-rows.push(
-  <div className="grid grid-cols-7 gap-1" key={day.toISOString()}>
-    {weekDays}
-  </div>
-);
+          key={day.toISOString()}
+          onClick={() => {
+            setSelectedDate(cloneDay);
+            setScheduledSession(null);
+          }}
+        >
+          <div className="font-bold">{formattedDate}</div>
+          <div className="mt-1 flex max-h-12 flex-col items-center space-y-1 overflow-y-auto text-xs text-gray-700">
+            {availabilities.slice(0, 3).map((slot, index) => (
+              <span key={index} className="rounded bg-green-200 px-1">
+                {slot.startTime}
+              </span>
+            ))}
+            {availabilities.length > 3 && (
+              <span className="text-gray-500">+{availabilities.length - 3} más</span>
+            )}
+          </div>
+        </div >);
+        day = addDays(day, 1);
+      }
+
+      rows.push(<div className="grid grid-cols-7 gap-1" key={day.toISOString()}>
+        {weekDays}
+      </div>);
     }
-return <div>{rows}</div>;
+
+    return <div>{rows}</div>;
   };
 
-const renderFooter = () => {
-  const dayOfWeek = selectedDate ? format(selectedDate, 'EEEE') : '';
-  const availableHours = dayOfWeek ? availability[dayOfWeek] || [] : [];
-  const slotsForDay = fetchedAvailability[dayOfWeek] || [];
+  const renderFooter = () => {
+    const dayOfWeek = selectedDate ? format(selectedDate, 'EEEE') : '';
+    const availableHours = dayOfWeek ? availability[dayOfWeek] || [] : [];
+
+    return (
+      <div className="mt-4">
+        {selectedDate && !scheduledSession && (
+          <div className="space-y-4 font-semibold text-blue-800">
+
+            <div>Fecha seleccionada: {format(selectedDate, 'dd/MM/yyyy')}</div>
+
+            {/* Formulario de creación de disponibilidad */}
+            {availableHours.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <label htmlFor="hour">Hora:</label>
+                <select
+                  id="hour"
+                  value={selectedHour}
+                  onChange={(e) => setSelectedHour(e.target.value)}
+                  className="rounded-lg border border-blue-300 px-2 py-1"
+                >
+                  {availableHours.map((hour) => (
+                    <option key={hour} value={hour.split(':')[0]}>
+                      {hour.split(':')[0]}
+                    </option>
+                  ))}
+                </select>
+              :
+                <select
+                  id="minute"
+                  value={selectedMinute}
+                  onChange={(e) => setSelectedMinute(e.target.value)}
+                  className="rounded-lg border border-blue-300 px-2 py-1"
+                >
+                  {[ '00', '30' ].map((min) => (
+                    <option key={min} value={min}>{min}</option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <p className="text-red-600">No hay disponibilidad para este día.</p>
+            )}
+
+            <center>
+              <button
+                className="mt-2 rounded-xl bg-blue-400 px-4 py-2 text-white hover:bg-blue-500"
+                onClick={() => {
+                  if (selectedDate) {
+                    const h = parseInt(selectedHour, 10);
+                    const m = parseInt(selectedMinute, 10);
+                    const newDate = new Date(selectedDate);
+                    newDate.setHours(h, m, 0, 0);
+                    handleCreate(newDate);
+                  }
+                }}
+              >
+              Agendar Sesión
+              </button>
+            </center>
+
+            <center>
+              <button
+                className="mt-2 rounded-xl bg-red-400 px-4 py-2 text-white hover:bg-red-500"
+                onClick={handleBlockDate}
+              >
+                {blockedDates.includes(format(selectedDate, 'yyyy-MM-dd'))
+                  ? 'Desbloquear Fecha'
+                  : 'Bloquear Fecha'}
+              </button>
+            </center>
+
+            {/* Horarios existentes */}
+            {daySlots.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="mt-4 font-semibold text-blue-800">
+                Horarios existentes para {dayOfWeek}
+                </h4>
+                {daySlots.map((slot) => (
+                  <div key={slot.id} className="flex items-center justify-between rounded-lg border bg-white p-2">
+                    <span>{slot.startTime} - {slot.endTime}</span>
+                    <div className="flex gap-2">
+                      <button
+                        className="rounded bg-yellow-300 px-2 py-1 text-sm"
+                        onClick={() => {
+                          setSelectedHour(slot.startTime.split(':')[0]);
+                          setSelectedMinute(slot.startTime.split(':')[1]);
+                          toast.info('Edita el horario y presiona "Guardar cambios"');
+                        }}
+                      >
+                      Editar
+                      </button>
+                      <button
+                        className="text-sm text-red-600 hover:underline"
+                        onClick={async () => {
+                          if (!user?.accessToken) {
+                            toast.error('No hay token de acceso disponible');
+                            return;
+                          }
+
+                          try {
+                            await deleteAvailability(slot.id, user.accessToken);
+                            toast.success('Disponibilidad eliminada');
+                            setDaySlots((prev) => prev.filter((s) => s.id !== slot.id));
+                          } catch (err) {
+                            toast.error('Error al eliminar la disponibilidad');
+                            console.error(err);
+                          }
+                        }}
+                      >
+                      Eliminar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Botón para guardar edición (actualizar horario) */}
+            <center>
+              <button
+                className="mt-4 rounded-xl bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                onClick={async () => {
+                  if (!user?.accessToken) {
+                    toast.error('No hay token de acceso disponible');
+                    return;
+                  }
+
+                  const allAvailabilities = await getAvailabilities(user.accessToken);
+                  const target = allAvailabilities.find((a) => a.day.toLowerCase() === dayOfWeek.toLowerCase()
+                    && a.startTime === `${selectedHour}:${selectedMinute}`);
+
+                  if (!target) {
+                    toast.error('No se encontró disponibilidad para editar');
+                    return;
+                  }
+
+                  const newStartTime = `${selectedHour}:${selectedMinute}`;
+                  const newEndTime = `${String(parseInt(selectedHour, 10) + 1).padStart(2, '0')}:${selectedMinute}`;
+
+                  try {
+                    await updateAvailability(target.id, {
+                      startTime: newStartTime,
+                      endTime: newEndTime
+                    }, user.accessToken);
+
+                    toast.success('Disponibilidad actualizada');
+
+                    // Refrescar los datos locales para reflejar los cambios
+                    const updatedAvailabilities = await getAvailabilities(user.accessToken);
+                    const filtered = updatedAvailabilities.filter((av) => av.day.toLowerCase() === dayOfWeek.toLowerCase());
+                    setDaySlots(filtered);
+
+                    const grouped: Record<string, { startTime: string, endTime: string }[]> = {};
+                    updatedAvailabilities.forEach((item) => {
+                      const day = item.day.charAt(0).toUpperCase() + item.day.slice(1);
+                      if (!grouped[day]) grouped[day] = [];
+                      grouped[day].push({ startTime: item.startTime, endTime: item.endTime });
+                    });
+                    setFetchedAvailability(grouped);
+                  } catch (err) {
+                    toast.error('Error al actualizar disponibilidad');
+                    console.error(err);
+                  }
+                }}
+              >
+              Guardar cambios
+              </button>
+            </center>
+
+          </div>
+        )}
+
+        {scheduledSession && (
+          <div className="text-center font-semibold text-blue-700">
+          ✅ Sesión agendada para el {format(scheduledSession, 'dd/MM/yyyy')} a las {format(scheduledSession, 'HH:mm')}
+          </div>
+        )}
+
+        {!selectedDate && !scheduledSession && (
+          <p className="text-gray-600">Selecciona una fecha para agendar.</p>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <div className="mt-4">
-      {selectedDate && !scheduledSession && (
-        <div className="text-blue-800 font-semibold space-y-4">
-
-          <div>Fecha seleccionada: {format(selectedDate, 'dd/MM/yyyy')}</div>
-
-          {/* Formulario de creación de disponibilidad */}
-          {availableHours.length > 0 ? (
-            <div className="flex gap-2 items-center">
-              <label htmlFor="hour">Hora:</label>
-              <select
-                id="hour"
-                value={selectedHour}
-                onChange={(e) => setSelectedHour(e.target.value)}
-                className="px-2 py-1 rounded-lg border border-blue-300"
-              >
-                {availableHours.map((hour) => (
-                  <option key={hour} value={hour.split(':')[0]}>
-                    {hour.split(':')[0]}
-                  </option>
-                ))}
-              </select>
-              :
-              <select
-                id="minute"
-                value={selectedMinute}
-                onChange={(e) => setSelectedMinute(e.target.value)}
-                className="px-2 py-1 rounded-lg border border-blue-300"
-              >
-                {['00', '30'].map((min) => (
-                  <option key={min} value={min}>{min}</option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <p className="text-red-600">No hay disponibilidad para este día.</p>
-          )}
-
-          <center>
-            <button
-              className="mt-2 bg-blue-400 text-white px-4 py-2 rounded-xl hover:bg-blue-500"
-              onClick={() => {
-                if (selectedDate) {
-                  const h = parseInt(selectedHour, 10);
-                  const m = parseInt(selectedMinute, 10);
-                  const newDate = new Date(selectedDate);
-                  newDate.setHours(h, m, 0, 0);
-                  handleCreate(newDate);
-                }
-              }}
-            >
-              Agendar Sesión
-            </button>
-          </center>
-
-          <center>
-            <button
-              className="mt-2 bg-red-400 text-white px-4 py-2 rounded-xl hover:bg-red-500"
-              onClick={handleBlockDate}
-            >
-              {blockedDates.includes(format(selectedDate, 'yyyy-MM-dd'))
-                ? 'Desbloquear Fecha'
-                : 'Bloquear Fecha'}
-            </button>
-          </center>
-
-
-          {/* Horarios existentes */}
-          {daySlots.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="font-semibold text-blue-800 mt-4">
-                Horarios existentes para {dayOfWeek}
-              </h4>
-              {daySlots.map((slot) => (
-                <div key={slot.id} className="flex items-center justify-between border p-2 rounded-lg bg-white">
-                  <span>{slot.startTime} - {slot.endTime}</span>
-                  <div className="flex gap-2">
-                    <button
-                      className="text-sm bg-yellow-300 px-2 py-1 rounded"
-                      onClick={() => {
-                        setSelectedHour(slot.startTime.split(':')[0]);
-                        setSelectedMinute(slot.startTime.split(':')[1]);
-                        toast.info('Edita el horario y presiona "Guardar cambios"');
-                      }}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="text-sm text-red-600 hover:underline"
-                      onClick={async () => {
-                        if (!user?.accessToken) {
-                          toast.error('No hay token de acceso disponible');
-                          return;
-                        }
-
-                        try {
-                          await deleteAvailability(slot.id, user.accessToken);
-                          toast.success('Disponibilidad eliminada');
-                          setDaySlots((prev) => prev.filter((s) => s.id !== slot.id));
-                        } catch (err) {
-                          toast.error('Error al eliminar la disponibilidad');
-                          console.error(err);
-                        }
-                      }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-
-          {/* Botón para guardar edición (actualizar horario) */}
-          <center>
-            <button
-              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
-              onClick={async () => {
-                if (!user?.accessToken) {
-                  toast.error('No hay token de acceso disponible');
-                  return;
-                }
-
-                const allAvailabilities = await getAvailabilities(user.accessToken);
-                const target = allAvailabilities.find(
-                  (a) =>
-                    a.day.toLowerCase() === dayOfWeek.toLowerCase() &&
-                    a.startTime === `${selectedHour}:${selectedMinute}`
-                );
-                if (!target) return toast.error('No se encontró disponibilidad para editar');
-
-                const newStartTime = `${selectedHour}:${selectedMinute}`;
-                const newEndTime = `${String(parseInt(selectedHour, 10) + 1).padStart(2, '0')}:${selectedMinute}`;
-
-                try {
-                  await updateAvailability(target.id, {
-                    startTime: newStartTime,
-                    endTime: newEndTime,
-                  }, user.accessToken);
-
-                  toast.success('Disponibilidad actualizada');
-
-                  // Refrescar los datos locales para reflejar los cambios
-                  const updatedAvailabilities = await getAvailabilities(user.accessToken);
-                  const filtered = updatedAvailabilities.filter(
-                    (av) => av.day.toLowerCase() === dayOfWeek.toLowerCase()
-                  );
-                  setDaySlots(filtered);
-
-                  const grouped: Record<string, { startTime: string, endTime: string }[]> = {};
-                  updatedAvailabilities.forEach((item) => {
-                    const day = item.day.charAt(0).toUpperCase() + item.day.slice(1);
-                    if (!grouped[day]) grouped[day] = [];
-                    grouped[day].push({ startTime: item.startTime, endTime: item.endTime });
-                  });
-                  setFetchedAvailability(grouped);
-                } catch (err) {
-                  toast.error('Error al actualizar disponibilidad');
-                  console.error(err);
-                }
-              }}
-            >
-              Guardar cambios
-            </button>
-          </center>
-
-        </div>
-      )}
-
-      {scheduledSession && (
-        <div className="text-blue-700 font-semibold text-center">
-          ✅ Sesión agendada para el {format(scheduledSession, 'dd/MM/yyyy')} a las {format(scheduledSession, 'HH:mm')}
-        </div>
-      )}
-
-      {!selectedDate && !scheduledSession && (
-        <p className="text-gray-600">Selecciona una fecha para agendar.</p>
-      )}
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="mx-auto w-full max-w-4xl rounded-2xl bg-blue-50 p-6 shadow-lg"
+    >
+      {renderHeader()}
+      {renderDays()}
+      {renderCells()}
+      <div className="min-h-[120px] transition-all duration-300 ease-in-out">
+        {renderFooter()}
+      </div>
+    </motion.div>
   );
-};
-
-
-return (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="max-w-4xl w-full mx-auto p-6 bg-blue-50 rounded-2xl shadow-lg"
-  >
-    {renderHeader()}
-    {renderDays()}
-    {renderCells()}
-    <div className="min-h-[120px] transition-all duration-300 ease-in-out">
-      {renderFooter()}
-    </div>
-  </motion.div>
-);
 }

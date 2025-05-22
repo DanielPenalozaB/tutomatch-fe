@@ -11,9 +11,7 @@ export const updateAvailability = async (
   id: number,
   data: UpdateAvailabilityDto,
   token: string
-) => {
-  return fetchApi(`/availabilities/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(data),
-  }, token);
-};
+) => fetchApi(`/availabilities/${id}`, {
+  method: 'PATCH',
+  body: JSON.stringify(data)
+}, token);
