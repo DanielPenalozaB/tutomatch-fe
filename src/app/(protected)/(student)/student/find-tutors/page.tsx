@@ -14,6 +14,7 @@ type PaginatorProps = {
   totalPages: number;
   onChange: (page: number) => void;
 };
+
 function Paginator({ page, totalPages, onChange }: PaginatorProps) {
   return (
     <div className="flex gap-2 my-4 items-center">
@@ -38,13 +39,14 @@ function Paginator({ page, totalPages, onChange }: PaginatorProps) {
 
 // Selector de orden
 type SortType = 'relevance' | 'hour' | 'rating';
+
 function SortSelector({ value, onChange }: { value: SortType; onChange: (v: SortType) => void }) {
   return (
     <div>
       <label className="block text-sm font-medium">Ordenar por</label>
       <select
         value={value}
-        onChange={e => onChange(e.target.value as SortType)}
+        onChange={(e) => onChange(e.target.value as SortType)}
         className="block w-full border rounded"
       >
         <option value="relevance">Relevancia</option>
@@ -67,6 +69,7 @@ type Tutor = {
   hourEnd: number;
   rating: number;
 };
+
 function TutorDetailModal({ tutor, onClose }: { tutor: Tutor | null; onClose: () => void }) {
   if (!tutor) return null;
   return (
@@ -112,10 +115,10 @@ const tutors: Tutor[] = [
     subject: 'Matemáticas',
     modality: 'virtual',
     schedule: 'Lunes 8-10am',
-    days: ['Lunes'],
+    days: [ 'Lunes' ],
     hourStart: 8,
     hourEnd: 10,
-    rating: 4.7,
+    rating: 4.7
   },
   {
     id: 2,
@@ -123,75 +126,81 @@ const tutors: Tutor[] = [
     subject: 'Física',
     modality: 'presencial',
     schedule: 'Martes 2-4pm',
-    days: ['Martes'],
+    days: [ 'Martes' ],
     hourStart: 14,
     hourEnd: 16,
-    rating: 4.2,
-  },
+    rating: 4.2
+  }
   // Puedes agregar más tutores aquí...
 ];
 
-const subjects = ['Matemáticas', 'Física', 'Química'];
-const modalities = ['presencial', 'virtual', 'mixta'];
+const subjects = [ 'Matemáticas', 'Física', 'Química' ];
+const modalities = [ 'presencial', 'virtual', 'mixta' ];
 
 export default function FindTutorsPage() {
-  const [filters, setFilters] = useState<Filters>({
+  const [ filters, setFilters ] = useState<Filters>({
     subject: '',
     modality: '',
     name: '',
     days: [],
     hourStart: '',
     hourEnd: '',
-    minRating: 0,
+    minRating: 0
   });
-  const [sort, setSort] = useState<SortType>('relevance');
+  const [ sort, setSort ] = useState<SortType>('relevance');
   const debouncedFilters = useDebouncedValue(filters, 300);
 
   // Paginación
-  const [page, setPage] = useState(1);
+  const [ page, setPage ] = useState(1);
   const tutorsPerPage = 5;
 
   // Detalle de tutor
-  const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
+  const [ selectedTutor, setSelectedTutor ] = useState<Tutor | null>(null);
 
   // Filtros y orden
-  const [filteredTutors, setFilteredTutors] = useState<Tutor[]>(tutors);
+  const [ filteredTutors, setFilteredTutors ] = useState<Tutor[]>(tutors);
 
   useEffect(() => {
     let result = tutors;
 
     if (debouncedFilters.subject) {
-      result = result.filter(t => t.subject === debouncedFilters.subject);
+      result = result.filter((t) => t.subject === debouncedFilters.subject);
     }
+
     if (debouncedFilters.modality) {
-      result = result.filter(t => t.modality === debouncedFilters.modality);
+      result = result.filter((t) => t.modality === debouncedFilters.modality);
     }
+
     if (debouncedFilters.name) {
-      result = result.filter(t => t.name.toLowerCase().includes(debouncedFilters.name.toLowerCase()));
+      result = result.filter((t) => t.name.toLowerCase().includes(debouncedFilters.name.toLowerCase()));
     }
+
     if (debouncedFilters.days.length > 0) {
-      result = result.filter(t => t.days?.some(d => debouncedFilters.days.includes(d)));
+      result = result.filter((t) => t.days?.some((d) => debouncedFilters.days.includes(d)));
     }
+
     if (debouncedFilters.hourStart) {
-      result = result.filter(t => t.hourStart >= Number(debouncedFilters.hourStart));
+      result = result.filter((t) => t.hourStart >= Number(debouncedFilters.hourStart));
     }
+
     if (debouncedFilters.hourEnd) {
-      result = result.filter(t => t.hourEnd <= Number(debouncedFilters.hourEnd));
+      result = result.filter((t) => t.hourEnd <= Number(debouncedFilters.hourEnd));
     }
+
     if (debouncedFilters.minRating) {
-      result = result.filter(t => t.rating >= debouncedFilters.minRating);
+      result = result.filter((t) => t.rating >= debouncedFilters.minRating);
     }
 
     // Ordenar resultados
     if (sort === 'rating') {
-      result = [...result].sort((a, b) => b.rating - a.rating);
+      result = [ ...result ].sort((a, b) => b.rating - a.rating);
     } else if (sort === 'hour') {
-      result = [...result].sort((a, b) => a.hourStart - b.hourStart);
+      result = [ ...result ].sort((a, b) => a.hourStart - b.hourStart);
     } // 'relevance' mantiene el orden original
 
     setFilteredTutors(result);
     setPage(1); // Resetear a la primera página cada vez que cambian los filtros/orden
-  }, [debouncedFilters, sort]);
+  }, [ debouncedFilters, sort ]);
 
   // Paginación
   const totalPages = Math.max(1, Math.ceil(filteredTutors.length / tutorsPerPage));
@@ -203,7 +212,7 @@ export default function FindTutorsPage() {
   // Asegúrate de que la página sea válida si cambian los resultados
   useEffect(() => {
     if (page > totalPages) setPage(1);
-  }, [totalPages, page]);
+  }, [ totalPages, page ]);
 
   return (
     <ContentSection title="Buscar tutorías" desc="Utiliza los filtros para encontrar el tutor ideal.">
@@ -215,11 +224,11 @@ export default function FindTutorsPage() {
               <label className="block text-sm font-medium">Asignatura</label>
               <select
                 value={filters.subject}
-                onChange={e => setFilters(f => ({ ...f, subject: e.target.value }))}
+                onChange={(e) => setFilters((f) => ({ ...f, subject: e.target.value }))}
                 className="mt-1 block w-full border rounded"
               >
                 <option value="">Todas</option>
-                {subjects.map(subject => (
+                {subjects.map((subject) => (
                   <option key={subject} value={subject}>{subject}</option>
                 ))}
               </select>
@@ -229,11 +238,11 @@ export default function FindTutorsPage() {
               <label className="block text-sm font-medium">Modalidad</label>
               <select
                 value={filters.modality}
-                onChange={e => setFilters(f => ({ ...f, modality: e.target.value }))}
+                onChange={(e) => setFilters((f) => ({ ...f, modality: e.target.value }))}
                 className="mt-1 block w-full border rounded"
               >
                 <option value="">Todas</option>
-                {modalities.map(m => (
+                {modalities.map((m) => (
                   <option key={m} value={m}>{m}</option>
                 ))}
               </select>
@@ -244,7 +253,7 @@ export default function FindTutorsPage() {
               <input
                 type="text"
                 value={filters.name}
-                onChange={e => setFilters(f => ({ ...f, name: e.target.value }))}
+                onChange={(e) => setFilters((f) => ({ ...f, name: e.target.value }))}
                 className="mt-1 block w-full border rounded"
                 placeholder="Buscar por nombre"
               />
@@ -252,7 +261,7 @@ export default function FindTutorsPage() {
             {/* Filtro de días */}
             <DaySelector
               selectedDays={filters.days}
-              onChange={(days: string[]) => setFilters(f => ({ ...f, days }))}
+              onChange={(days: string[]) => setFilters((f) => ({ ...f, days }))}
             />
             {/* Filtro de horario */}
             <div>
@@ -262,7 +271,7 @@ export default function FindTutorsPage() {
                 min={0}
                 max={23}
                 value={filters.hourStart}
-                onChange={e => setFilters(f => ({ ...f, hourStart: e.target.value }))}
+                onChange={(e) => setFilters((f) => ({ ...f, hourStart: e.target.value }))}
                 className="mt-1 block w-20 border rounded"
               />
             </div>
@@ -273,14 +282,14 @@ export default function FindTutorsPage() {
                 min={0}
                 max={23}
                 value={filters.hourEnd}
-                onChange={e => setFilters(f => ({ ...f, hourEnd: e.target.value }))}
+                onChange={(e) => setFilters((f) => ({ ...f, hourEnd: e.target.value }))}
                 className="mt-1 block w-20 border rounded"
               />
             </div>
             {/* Filtro de calificación */}
             <RatingFilter
               minRating={filters.minRating}
-              onChange={(minRating: number) => setFilters(f => ({ ...f, minRating }))}
+              onChange={(minRating: number) => setFilters((f) => ({ ...f, minRating }))}
             />
             {/* Selector de orden */}
             <SortSelector value={sort} onChange={setSort} />
@@ -294,7 +303,7 @@ export default function FindTutorsPage() {
             {paginatedTutors.length === 0 && (
               <li className="text-gray-500">No hay tutores que coincidan con los filtros.</li>
             )}
-            {paginatedTutors.map(tutor => (
+            {paginatedTutors.map((tutor) => (
               <li
                 key={tutor.id}
                 className="p-3 border rounded flex flex-col md:flex-row md:justify-between cursor-pointer hover:bg-gray-50"

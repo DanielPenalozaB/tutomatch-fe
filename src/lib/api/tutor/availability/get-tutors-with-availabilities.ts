@@ -1,8 +1,9 @@
 export async function getAllTutorsWithAvailabilities(token?: string) {
-  const headers: HeadersInit = {};
+  const headers: Record<string, string> = {};
+
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch('/api/users/tutors-with-availabilities', {
-    headers,
+    headers
   });
   if (!res.ok) throw new Error('Error obteniendo tutores');
   return res.json();

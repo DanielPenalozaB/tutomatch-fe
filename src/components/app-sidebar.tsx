@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator
 } from '@/components/ui/sidebar';
-import { BadgeCheck, Bell, BookCopy, Calendar, Calendar1Icon, CalendarCheck, ClockFading, FolderDown, GraduationCap, Grid2X2PlusIcon, Inbox, Search, User } from 'lucide-react';
+import { BadgeCheck, Bell, BookCopy, Calendar, CalendarCheck, ClockFading, FolderDown, GraduationCap, Grid2X2PlusIcon, Inbox, Search, User } from 'lucide-react';
 import { NavUser } from './nav-user';
 import { usePathname } from 'next/navigation';
 import { useSession } from '@/hooks/use-session';

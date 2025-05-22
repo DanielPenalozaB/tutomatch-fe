@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type RatingFilterProps = {
   minRating: number;
@@ -15,7 +15,7 @@ const RatingFilter: React.FC<RatingFilterProps> = ({ minRating, onChange }) => (
       step={0.1}
       value={minRating}
       className="mt-1 block w-20 border rounded"
-      onChange={e => onChange(Number(e.target.value))}
+      onChange={(e) => onChange(Number(e.target.value))}
     />
   </div>
 );
